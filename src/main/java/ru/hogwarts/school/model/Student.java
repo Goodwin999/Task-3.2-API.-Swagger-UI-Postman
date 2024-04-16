@@ -8,6 +8,8 @@ public class Student {
     private String name;
     private int age;
 
+    private Faculty faculty;
+
 
 
     public Student(Long id, String name, int age) {
