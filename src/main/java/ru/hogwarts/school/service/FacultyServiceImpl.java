@@ -2,7 +2,9 @@ package ru.hogwarts.school.service;
 
 import ru.hogwarts.school.model.Faculty;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FacultyServiceImpl implements FacultyService {
@@ -42,4 +44,15 @@ public class FacultyServiceImpl implements FacultyService {
     public Faculty delete(long id) {
         return facultyMap.remove(id);
     }
+    public List<Faculty> filterFacultiesByColor(String color) {
+        List<Faculty> filteredFaculties = new ArrayList<>();
+        for (Faculty faculty : facultyMap.values()) {
+            if (faculty.getColor().equalsIgnoreCase(color)) {
+                filteredFaculties.add(faculty);
+            }
+        }
+        return filteredFaculties;
+    }
+
+
 }

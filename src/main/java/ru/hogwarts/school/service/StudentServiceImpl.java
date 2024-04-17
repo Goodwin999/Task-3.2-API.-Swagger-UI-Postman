@@ -3,9 +3,7 @@ package ru.hogwarts.school.service;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Student;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class StudentServiceImpl implements StudentService {
 
@@ -72,6 +70,16 @@ public class StudentServiceImpl implements StudentService {
             return null;
 
         }
+    }
+    @Override
+    public List<Student> filterStudentsByAge(int age) {
+        List<Student> filteredStudents = new ArrayList<>();
+        for (Student student : studentMap.values()) {
+            if (student.getAge() == age) {
+                filteredStudents.add(student);
+            }
+        }
+        return filteredStudents;
     }
 }
 

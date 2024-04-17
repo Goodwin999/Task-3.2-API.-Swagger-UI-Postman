@@ -2,10 +2,13 @@ package ru.hogwarts.school.controller;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.service.FacultyService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/faculty")
@@ -49,5 +52,16 @@ public class FacultyController {
         }
         return ResponseEntity.noContent().build();
     }
-}
+    @GetMapping("/filterByColor/{color}")
+    public ResponseEntity<?> filterFacultiesByColor(@PathVariable String color) {
+        List<Faculty> filteredFaculties = facultyService.filterFacultiesByColor(color);
+        if (filteredFaculties.isEmpty()) {
+            String message = "Факультеты с цветом " + color + " не найдены";
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(message);
+        } else {
+            return ResponseEntity.ok().body(filteredFaculties);
+        }
+    }
+    }
+
 
