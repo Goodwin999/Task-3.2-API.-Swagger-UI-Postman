@@ -7,8 +7,9 @@ import java.util.Map;
 
 public class FacultyServiceImpl implements FacultyService {
 
-    private Map<Long, Faculty> faculties = new HashMap<>();
+    private Map<Long, Faculty> facultyMap = new HashMap<>();
     private long facultyIdCounter = 0;
+
     @Override
     public Faculty create(Faculty faculty) {
 
