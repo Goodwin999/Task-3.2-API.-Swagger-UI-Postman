@@ -1,4 +1,4 @@
-package ru.hogwarts.school.service;
+package ru.hogwarts.school.exception;
 
 public class DatabaseAccessException extends RuntimeException {
 
