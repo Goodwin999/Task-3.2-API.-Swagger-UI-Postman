@@ -1,6 +1,8 @@
 package ru.hogwarts.school.controller;
 
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/student")
+@Tag(name = "Student Management", description = "Endpoints for managing students")
 public class StudentController {
     private final StudentService studentService;
 
@@ -20,12 +23,13 @@ public class StudentController {
     }
 
 
+    @Operation(summary = "Создать нового студента")
     @PostMapping("/create")
     public ResponseEntity<Student> createStudent(@RequestBody Student student) {
         Student createdStudent = studentService.create(student);
         return ResponseEntity.ok().body(createdStudent);
     }
-
+    @Operation(summary = "Получить студента по ID")
     @GetMapping("/read/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable long id) {
         Student student = studentService.read(id);
@@ -34,7 +38,7 @@ public class StudentController {
         }
         return ResponseEntity.ok().body(student);
     }
-
+    @Operation(summary = "Обновить существующего студента ")
     @PutMapping("/update")
     public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
         Student updatedStudent = studentService.update(student);
@@ -43,7 +47,7 @@ public class StudentController {
         }
         return ResponseEntity.ok().body(updatedStudent);
     }
-
+    @Operation(summary = "Удалить студента по ID")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable long id) {
         Student deletedStudent = studentService.delete(id);
@@ -52,6 +56,7 @@ public class StudentController {
         }
         return ResponseEntity.noContent().build();
     }
+    @Operation(summary = "Фильтровать студентов по возрасту")
     @GetMapping("/filterByAge/{age}")
     public ResponseEntity<List<Student>> filterStudentsByAge(@PathVariable int age) {
         List<Student> filteredStudents = studentService.filterStudentsByAge(age);
