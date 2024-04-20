@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/student")
-@Tag(name = "Student Management", description = "Endpoints for managing students")
+@Tag(name = "Управление студентами", description = "Методы для работы со студентами")
 public class StudentController {
     private final StudentService studentService;
 
