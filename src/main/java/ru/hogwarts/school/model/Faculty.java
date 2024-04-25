@@ -1,21 +1,21 @@
 package ru.hogwarts.school.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Faculty {
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
     private String name;
     private String color;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
     private List<Student> studentList;
-
+    public Faculty() {
+    }
     public Faculty(Long id, String name, String color, List<Student> studentList) {
         this.id = id;
         this.name = name;

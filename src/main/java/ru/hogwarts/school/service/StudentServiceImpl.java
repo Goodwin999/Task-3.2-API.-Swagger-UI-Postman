@@ -1,87 +1,74 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
 @Service
 public class StudentServiceImpl implements StudentService {
 
+    private final StudentRepository studentRepository;
 
-    private Map<Long, Student> studentMap = new HashMap<>();
-    private long studentIdCounter = 0;
+    @Autowired
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
+
 
     @Override
     public Student create(Student student) {
-        Long id = ++studentIdCounter;
-        String name = student.getName();
-        if (name == null || name.isEmpty()) {
+        if (student.getName() == null || student.getName().isEmpty()) {
             throw new IllegalArgumentException("Имя не может быть пустым или не указанным.");
         }
-        student.setId(id);
-        studentMap.put(id, student);
-        return student;
+        return studentRepository.save(student);
     }
 
     @Override
     public Student read(long id) {
-        Student student = studentMap.get(id);
-        if (student == null) {
+        Optional<Student> studentOpt = studentRepository.findById(id);
+        if (studentOpt.isEmpty()) {
             System.out.println("Студент с id " + id + " не найден.");
+            return null;
         }
-        return student;
+        return studentOpt.get();
     }
 
     @Override
     public Student update(Student updatedStudent) {
-        Long id = updatedStudent.getId();
-        if (!studentMap.containsKey(id)) {
-            System.out.println("Студент с id " + id + " не найден. Обновление невозможно.");
+        Optional<Student> studentOpt = studentRepository.findById(updatedStudent.getId());
+        if (studentOpt.isEmpty()) {
+            System.out.println("Студент с id " + updatedStudent.getId() + " не найден. Обновление невозможно.");
+            return null;
         }
-        studentMap.put(id, updatedStudent);
-        return updatedStudent;
+        return studentRepository.save(updatedStudent);
     }
 
     @Override
-    public Student delete(long id) {
-        boolean confirmationRequired = true;
-
-        if (confirmationRequired) {
-            Scanner scanner = new Scanner(System.in);
-            System.out.print("Вы уверены, что хотите удалить студента с id " + id + "? (yes/no): ");
-            String confirmation = scanner.nextLine().trim();
-            if (!confirmation.equalsIgnoreCase("yes")) {
-                System.out.println("Удаление отменено.");
-                return null;
-            }
+    public boolean delete(long id) {
+        Optional<Student> studentOpt = studentRepository.findById(id);
+        if (studentOpt.isEmpty()) {
+            System.out.println("Студент с id " + id + " не найден. Удаление невозможно.");
+            return false;
         }
-
-        try {
-            Student removedStudent = studentMap.remove(id);
-            if (removedStudent == null) {
-                System.out.println("Студент с id " + id + " не найден. Удаление невозможно.");
-            } else {
-                System.out.println("Студент с id " + id + " успешно удален.");
-            }
-            return removedStudent;
-        } catch (DatabaseAccessException e) {
-            System.out.println("Невозможно удалить студента из-за отсутствия доступа к базе данных по техническим причинам.");
-            e.printStackTrace();
-            return null;
-
-        }
+        studentRepository.deleteById(id);
+        System.out.println("Студент с id " + id + " успешно удален.");
+        return true;
     }
+
     @Override
     public List<Student> filterStudentsByAge(int age) {
+        List<Student> allStudents = studentRepository.findAll();
         List<Student> filteredStudents = new ArrayList<>();
-        for (Student student : studentMap.values()) {
+
+        for (Student student : allStudents) {
             if (student.getAge() == age) {
                 filteredStudents.add(student);
             }
         }
+
         return filteredStudents;
     }
 }
-
-

@@ -11,6 +11,6 @@ public interface StudentService {
 
     Student update(Student student);
 
-    Student delete(long id);
+    boolean delete(long id);
     List<Student> filterStudentsByAge(int age);
 }
