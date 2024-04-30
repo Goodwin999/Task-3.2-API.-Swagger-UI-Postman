@@ -23,8 +23,19 @@ public class StudentServiceImpl implements StudentService {
         if (student.getName() == null || student.getName().isEmpty()) {
             throw new IllegalArgumentException("Имя не может быть пустым или не указанным.");
         }
+
+
+        Optional<Student> existingStudent = studentRepository.findAll().stream()
+                .filter(s -> s.getName().equalsIgnoreCase(student.getName()))
+                .findFirst();
+
+        if (existingStudent.isPresent()) {
+            throw new IllegalArgumentException("Студент с таким именем уже существует.");
+        }
+
         return studentRepository.save(student);
     }
+
 
     @Override
     public Student read(long id) {

@@ -14,6 +14,7 @@ public class Faculty {
     private String color;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
     private List<Student> studentList;
+
     public Faculty() {
     }
     public Faculty(Long id, String name, String color, List<Student> studentList) {
