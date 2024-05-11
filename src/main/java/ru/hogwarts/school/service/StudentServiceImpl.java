@@ -1,6 +1,5 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Student;
@@ -9,33 +8,24 @@ import ru.hogwarts.school.repository.StudentRepository;
 import java.util.*;
 @Service
 public class StudentServiceImpl implements StudentService {
-
     private final StudentRepository studentRepository;
 
-    @Autowired
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-
     @Override
-    public Student create(Student student) {
-        if (student.getName() == null || student.getName().isEmpty()) {
-            throw new IllegalArgumentException("Имя не может быть пустым или не указанным.");
+    public Student create(Student student) throws DatabaseAccessException {
+        try {
+            if (student.getName() == null || student.getName().isEmpty()) {
+                throw new IllegalArgumentException("Имя не может быть пустым или не указанным.");
+            }
+            student.setId(null);
+            return studentRepository.save(student);
+        } catch (Exception ex) {
+            throw new DatabaseAccessException("Ошибка доступа к базе данных при создании студента: " + ex.getMessage(), ex);
         }
-
-
-        Optional<Student> existingStudent = studentRepository.findAll().stream()
-                .filter(s -> s.getName().equalsIgnoreCase(student.getName()))
-                .findFirst();
-
-        if (existingStudent.isPresent()) {
-            throw new IllegalArgumentException("Студент с таким именем уже существует.");
-        }
-
-        return studentRepository.save(student);
     }
-
 
     @Override
     public Student read(long id) {
@@ -71,15 +61,6 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public List<Student> filterStudentsByAge(int age) {
-        List<Student> allStudents = studentRepository.findAll();
-        List<Student> filteredStudents = new ArrayList<>();
-
-        for (Student student : allStudents) {
-            if (student.getAge() == age) {
-                filteredStudents.add(student);
-            }
-        }
-
-        return filteredStudents;
+        return studentRepository.findByAge(age);
     }
 }

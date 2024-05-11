@@ -1,11 +1,12 @@
 package ru.hogwarts.school.service;
 
+import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Student;
 
 import java.util.List;
 
 public interface StudentService {
-    Student create(Student student);
+    Student create(Student student) throws DatabaseAccessException;
 
     Student read(long id);
 

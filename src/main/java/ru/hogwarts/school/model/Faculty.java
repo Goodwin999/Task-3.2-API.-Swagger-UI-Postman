@@ -12,16 +12,14 @@ public class Faculty {
     private Long id;
     private String name;
     private String color;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "faculty")
-    private List<Student> studentList;
 
     public Faculty() {
     }
-    public Faculty(Long id, String name, String color, List<Student> studentList) {
+
+    public Faculty(Long id, String name, String color) {
         this.id = id;
         this.name = name;
         this.color = color;
-        this.studentList = studentList;
     }
 
     public Long getId() {
@@ -48,25 +46,18 @@ public class Faculty {
         this.color = color;
     }
 
-    public List<Student> getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(List<Student> studentList) {
-        this.studentList = studentList;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Faculty faculty = (Faculty) o;
-        return Objects.equals(id, faculty.id) && Objects.equals(name, faculty.name) && Objects.equals(color, faculty.color) && Objects.equals(studentList, faculty.studentList);
+        return Objects.equals(id, faculty.id) && Objects.equals(name, faculty.name) && Objects.equals(color, faculty.color);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, color, studentList);
+        return Objects.hash(id, name, color);
     }
 
     @Override
@@ -75,7 +66,6 @@ public class Faculty {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", color='" + color + '\'' +
-                ", studentList=" + studentList +
                 '}';
     }
 }
