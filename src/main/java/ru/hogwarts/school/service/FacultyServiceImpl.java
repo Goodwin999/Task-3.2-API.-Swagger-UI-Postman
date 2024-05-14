@@ -56,7 +56,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public List<Faculty> searchForFacultyByNameOrColorCaseInsensitive(String name, String color) {
-        return facultyRepository.searchForFacultyByNameOrColorCaseInsensitive(name, color);
+    public List<Faculty> searchFacultiesByNameOrColorIgnoreCase(String searchString) {
+        return facultyRepository.findByNameIgnoreCaseContainingOrColorIgnoreCaseContaining(searchString, searchString);
     }
 }

@@ -59,11 +59,12 @@ public class FacultyController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Faculty>> searchForFacultyByNameOrColorCaseInsensitive(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
-        List<Faculty> foundFaculties = facultyService.searchForFacultyByNameOrColorCaseInsensitive(name, color);
+    public ResponseEntity<List<Faculty>> searchFacultiesByNameOrColorIgnoreCase(@RequestParam String searchString) {
+        List<Faculty> foundFaculties = facultyService.searchFacultiesByNameOrColorIgnoreCase(searchString);
         return ResponseEntity.ok().body(foundFaculties);
     }
 }
+
 
 
 
