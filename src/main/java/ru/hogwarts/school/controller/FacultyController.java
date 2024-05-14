@@ -24,6 +24,7 @@ public class FacultyController {
         Faculty createdFaculty = facultyService.create(faculty);
         return ResponseEntity.ok().body(createdFaculty);
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Faculty> getFaculty(@PathVariable long id) {
         Faculty faculty = facultyService.read(id);
@@ -41,6 +42,7 @@ public class FacultyController {
         }
         return ResponseEntity.ok().body(updatedFaculty);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteFaculty(@PathVariable long id) {
         boolean deleted = facultyService.delete(id);
@@ -49,12 +51,19 @@ public class FacultyController {
         }
         return ResponseEntity.noContent().build();
     }
-    @GetMapping("/filter")
+
+    @GetMapping("/")
     public ResponseEntity<List<Faculty>> filterFacultiesByColor(@RequestParam String color) {
         List<Faculty> filteredFaculties = facultyService.filterFacultiesByColor(color);
         return ResponseEntity.ok().body(filteredFaculties);
-        }
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Faculty>> searchForFacultyByNameOrColorCaseInsensitive(@RequestParam(required = false) String name, @RequestParam(required = false) String color) {
+        List<Faculty> foundFaculties = facultyService.searchForFacultyByNameOrColorCaseInsensitive(name, color);
+        return ResponseEntity.ok().body(foundFaculties);
+    }
+}
 
 
 

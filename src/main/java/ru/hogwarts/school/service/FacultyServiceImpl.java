@@ -28,7 +28,7 @@ public class FacultyServiceImpl implements FacultyService {
     }
 
     @Override
-    public Faculty read(long id){
+    public Faculty read(long id) {
         return facultyRepository.findById(id).orElse(null);
     }
 
@@ -50,7 +50,13 @@ public class FacultyServiceImpl implements FacultyService {
         return true;
     }
 
+    @Override
     public List<Faculty> filterFacultiesByColor(String color) {
         return facultyRepository.findByColorIgnoreCase(color);
+    }
+
+    @Override
+    public List<Faculty> searchForFacultyByNameOrColorCaseInsensitive(String name, String color) {
+        return facultyRepository.searchForFacultyByNameOrColorCaseInsensitive(name, color);
     }
 }
