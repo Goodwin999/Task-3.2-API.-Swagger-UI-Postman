@@ -11,7 +11,8 @@ public class Student {
     private Long id;
     private String name;
     private int age;
- @ManyToOne
+    @ManyToOne
+    @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
     public Student() {

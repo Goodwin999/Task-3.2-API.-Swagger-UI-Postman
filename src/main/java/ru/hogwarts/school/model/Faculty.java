@@ -1,5 +1,4 @@
 package ru.hogwarts.school.model;
-
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -12,6 +11,8 @@ public class Faculty {
     private Long id;
     private String name;
     private String color;
+    @OneToMany(mappedBy = "faculty")
+    private List<Student> students;
 
     public Faculty() {
     }
