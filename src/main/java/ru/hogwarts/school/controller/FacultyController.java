@@ -5,6 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.FacultyService;
 
 import java.util.List;
@@ -62,6 +63,16 @@ public class FacultyController {
     public ResponseEntity<List<Faculty>> searchFacultiesByNameOrColorIgnoreCase(@RequestParam String searchString) {
         List<Faculty> foundFaculties = facultyService.searchFacultiesByNameOrColorIgnoreCase(searchString);
         return ResponseEntity.ok().body(foundFaculties);
+    }
+
+        @GetMapping("/{id}/students")
+        public ResponseEntity<List<Student>> getStudentsByFaculty(@PathVariable long id) {
+            Faculty faculty = facultyService.read(id);
+            if (faculty == null) {
+                return ResponseEntity.notFound().build();
+            }
+            List<Student> students = faculty.getStudents();
+            return ResponseEntity.ok().body(students);
     }
 }
 

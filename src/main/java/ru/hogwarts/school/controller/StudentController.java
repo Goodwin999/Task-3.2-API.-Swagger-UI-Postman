@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.exception.DatabaseAccessException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
@@ -60,5 +61,14 @@ public class StudentController {
     public ResponseEntity<List<Student>> getStudentsByAgeRange(@RequestParam int minAge, @RequestParam int maxAge) {
         List<Student> students = studentRepository.findByAgeBetween(minAge, maxAge);
         return ResponseEntity.ok().body(students);
+    }
+    @GetMapping("/faculty/{studentId}")
+        public ResponseEntity<Faculty> getStudentFaculty(@PathVariable long id) {
+            Student student = studentService.read(id);
+            if (student == null) {
+                return ResponseEntity.notFound().build();
+            }
+            Faculty faculty = student.getFaculty();
+            return ResponseEntity.ok().body(faculty);
     }
 }
