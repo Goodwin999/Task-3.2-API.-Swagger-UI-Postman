@@ -11,6 +11,9 @@ public class Student {
     private Long id;
     private String name;
     private int age;
+
+    @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
+    private Avatar avatar;
     @ManyToOne
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
