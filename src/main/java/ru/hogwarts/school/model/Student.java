@@ -1,5 +1,6 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -11,7 +12,7 @@ public class Student {
     private Long id;
     private String name;
     private int age;
-
+    @JsonIgnore
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private Avatar avatar;
     @ManyToOne

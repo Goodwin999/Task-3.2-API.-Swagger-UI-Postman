@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Avatar;
 import ru.hogwarts.school.repository.AvatarRepository;
@@ -8,6 +9,7 @@ import java.util.Optional;
 
 @Service
 public class AvatarServiceImpl implements AvatarService {
+    @Autowired
     private AvatarRepository avatarRepository;
 
     @Override

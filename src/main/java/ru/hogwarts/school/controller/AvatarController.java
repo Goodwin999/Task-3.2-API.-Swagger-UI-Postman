@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -8,8 +9,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.model.Avatar;
+import ru.hogwarts.school.model.AvatarDTO;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.service.AvatarService;
+import ru.hogwarts.school.service.StudentService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,43 +21,74 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/avatars")
 public class AvatarController {
     private final AvatarService avatarService;
+    private final StudentService studentService;
     @Value("${avatar.upload.dir}")
     private String uploadDir;
-    public AvatarController(AvatarService avatarService) {
+    public AvatarController(AvatarService avatarService, StudentService studentService, @Value("${avatar.upload.dir}") String uploadDir) {
         this.avatarService = avatarService;
+        this.studentService = studentService;
+        this.uploadDir = uploadDir;
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<Avatar> uploadAvatar(@RequestParam("file") MultipartFile file, @RequestParam("studentId") Long studentId) throws IOException {
-
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<AvatarDTO> uploadAvatar(@RequestPart("file") MultipartFile file, @RequestParam("studentId") Long studentId) {
         File directory = new File(uploadDir);
-        if (!directory.exists()) {
-            directory.mkdirs();
+        if (!directory.exists() && !directory.mkdirs()) {
+            System.err.println("Failed to create directory: " + uploadDir);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
 
-        Avatar avatar = new Avatar();
-        avatar.setFilePath(file.getOriginalFilename());
-        avatar.setFileSize(file.getSize());
-        avatar.setMediaType(file.getContentType());
-        avatar.setData(file.getBytes());
+        try {
+            Avatar avatar = new Avatar();
+            avatar.setFilePath(file.getOriginalFilename());
+            avatar.setFileSize(file.getSize());
+            avatar.setMediaType(file.getContentType());
+            avatar.setData(file.getBytes());
 
+            Student student = studentService.read(studentId);
+            if (student == null) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            avatar.setStudent(student);
 
-        avatar = avatarService.saveAvatar(avatar);
+            avatar = avatarService.saveAvatar(avatar);
 
+            String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+            System.out.println("Имя файла: " + fileName);
 
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        Path filePath = Paths.get(uploadDir + File.separator + fileName);
-        try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
-            fos.write(file.getBytes());
+            Path filePath = Paths.get(uploadDir, fileName);
+            System.out.println("Путь для сохранения файла: " + filePath.toString());
+
+            try (FileOutputStream fos = new FileOutputStream(filePath.toFile())) {
+                System.out.println("Начало записи файла...");
+                fos.write(file.getBytes());
+                System.out.println("Файл успешно сохранен: " + filePath.toString());
+            } catch (IOException e) {
+                System.err.println("Ошибка при сохранении файла: " + e.getMessage());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            }
+
+            // Возвращаем DTO
+            AvatarDTO avatarDTO = new AvatarDTO();
+            avatarDTO.setId(avatar.getId());
+            avatarDTO.setFilePath(avatar.getFilePath());
+            avatarDTO.setFileSize(avatar.getFileSize());
+            avatarDTO.setMediaType(avatar.getMediaType());
+
+            return new ResponseEntity<>(avatarDTO, HttpStatus.CREATED);
+
+        } catch (IOException e) {
+            System.err.println("Ошибка при обработке файла: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
-        return new ResponseEntity<>(avatar, HttpStatus.CREATED);
     }
+
 
     @GetMapping("/from-db/{id}")
     public ResponseEntity<byte[]> getAvatarFromDatabase(@PathVariable Long id) {
