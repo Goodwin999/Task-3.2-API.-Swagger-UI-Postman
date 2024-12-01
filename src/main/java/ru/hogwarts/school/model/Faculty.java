@@ -14,9 +14,6 @@ public class Faculty {
     @OneToMany(mappedBy = "faculty")
     private List<Student> students;
 
-    public Faculty() {
-    }
-
     public Faculty(Long id, String name, String color) {
         this.id = id;
         this.name = name;
