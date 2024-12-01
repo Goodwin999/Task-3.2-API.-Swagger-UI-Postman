@@ -19,15 +19,16 @@ public class Student {
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
-    public Student() {
-    }
-
-    public Student(Long id, String name, int age, Faculty faculty) {
-        this.id = id;
+    public Student(String name, int age, Faculty faculty) {
         this.name = name;
         this.age = age;
         this.faculty = faculty;
     }
+
+    public Student() {
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -65,7 +66,7 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
+        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name) &&  Objects.equals(faculty, student.faculty);
     }
 
     @Override

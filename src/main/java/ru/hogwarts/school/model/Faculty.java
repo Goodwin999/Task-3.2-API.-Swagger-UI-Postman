@@ -12,9 +12,9 @@ public class Faculty {
     private String name;
     private String color;
     @OneToMany(mappedBy = "faculty")
-    private List<Student> students;
+    private List<Student> student;
 
-    public Faculty(Long id, String name, String color) {
+    public Faculty() {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -44,11 +44,11 @@ public class Faculty {
         this.color = color;
     }
     public List<Student> getStudents() {
-        return students;
+        return student;
     }
 
     public void setStudents(List<Student> students) {
-        this.students = students;
+        this.student = students;
     }
 
 

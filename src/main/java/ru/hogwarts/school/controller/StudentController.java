@@ -18,8 +18,9 @@ public class StudentController {
     private final StudentService studentService;
     private StudentRepository studentRepository;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentService studentService, StudentRepository studentRepository) {
         this.studentService = studentService;
+        this.studentRepository = studentRepository;
     }
 
     @PostMapping("/")
@@ -63,8 +64,8 @@ public class StudentController {
         return ResponseEntity.ok().body(students);
     }
     @GetMapping("/faculty/{studentId}")
-        public ResponseEntity<Faculty> getStudentFaculty(@PathVariable long id) {
-            Student student = studentService.read(id);
+        public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("studentId") long studentId) {
+            Student student = studentService.read(studentId);
             if (student == null) {
                 return ResponseEntity.notFound().build();
             }
