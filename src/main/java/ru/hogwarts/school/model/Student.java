@@ -1,4 +1,5 @@
 package ru.hogwarts.school.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.Objects;
@@ -13,6 +14,7 @@ public class Student {
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private Avatar avatar;
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "faculty_id")
     private Faculty faculty;
 
