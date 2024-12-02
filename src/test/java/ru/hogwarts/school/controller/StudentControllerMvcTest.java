@@ -95,7 +95,7 @@ class StudentControllerMvcTest {
         faculty.setName("Gryffindor");
         Student student = new Student(1L, "Harry Potter", 17, faculty);
         Mockito.when(studentService.read(1L)).thenReturn(student);
-        mockMvc.perform(get("/faculty/1"))
+        mockMvc.perform(get("/student/faculty/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Gryffindor")));
     }

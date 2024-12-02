@@ -12,7 +12,7 @@ import ru.hogwarts.school.service.StudentService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/student/")
 @Tag(name = "Управление студентами", description = "Методы для работы со студентами")
 public class StudentController {
     private final StudentService studentService;
