@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @WebMvcTest(StudentController.class)
-public class StudentControllerMvcTest {
+class StudentControllerMvcTest {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
