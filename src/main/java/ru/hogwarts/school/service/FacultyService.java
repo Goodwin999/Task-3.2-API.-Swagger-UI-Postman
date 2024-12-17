@@ -1,6 +1,8 @@
 package ru.hogwarts.school.service;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.model.Student;
+
 import java.util.List;
 
 public interface FacultyService {
@@ -10,4 +12,6 @@ public interface FacultyService {
     boolean delete(long id);
     List<Faculty> filterFacultiesByColor(String color);
     List<Faculty> searchFacultiesByNameOrColorIgnoreCase(String searchString);
+    List<Student> getStudentsByFacultyId(long facultyId);
+
 }

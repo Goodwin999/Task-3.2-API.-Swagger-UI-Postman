@@ -16,7 +16,7 @@ import java.util.List;
 @Tag(name = "Управление студентами", description = "Методы для работы со студентами")
 public class StudentController {
     private final StudentService studentService;
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
     public StudentController(StudentService studentService, StudentRepository studentRepository) {
         this.studentService = studentService;
@@ -64,12 +64,12 @@ public class StudentController {
         return ResponseEntity.ok().body(students);
     }
     @GetMapping("/faculty/{id}")
-        public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("studentId") long studentId) {
-            Student student = studentService.read(studentId);
-            if (student == null) {
-                return ResponseEntity.notFound().build();
-            }
-            Faculty faculty = student.getFaculty();
-            return ResponseEntity.ok().body(faculty);
+    public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("id") long studentId) {
+        Student student = studentService.read(studentId);
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Faculty faculty = student.getFaculty();
+        return ResponseEntity.ok().body(faculty);
     }
 }

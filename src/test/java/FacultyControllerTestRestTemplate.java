@@ -8,8 +8,6 @@ import org.springframework.test.context.ContextConfiguration;
 import ru.hogwarts.school.SchoolApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
-
-import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;

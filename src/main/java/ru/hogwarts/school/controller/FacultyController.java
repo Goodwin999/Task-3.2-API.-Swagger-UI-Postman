@@ -65,15 +65,15 @@ public class FacultyController {
         return ResponseEntity.ok().body(foundFaculties);
     }
 
-        @GetMapping("/{id}/students")
-        public ResponseEntity<List<Student>> getStudentsByFaculty(@PathVariable long id) {
-            Faculty faculty = facultyService.read(id);
-            if (faculty == null) {
-                return ResponseEntity.notFound().build();
-            }
-            List<Student> students = faculty.getStudents();
-            return ResponseEntity.ok().body(students);
+    @GetMapping("/{id}/students")
+    public ResponseEntity<List<Student>> getStudentsByFaculty(@PathVariable long id) {
+        List<Student> students = facultyService.getStudentsByFacultyId(id);
+        if (students.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(students);
     }
+
 }
 
 
