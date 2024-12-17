@@ -12,8 +12,6 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
-import java.util.function.BooleanSupplier;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -90,17 +88,17 @@ public class StudentControllerTestRestTemplate {
         @Test
         public void testGetStudentsByAgeRange() {
             restTemplate.postForEntity("/student/", testStudent, Student.class);
-            ResponseEntity<Student> response = restTemplate.getForEntity("/student/age?minAge=18&maxAge=20",  Student.class);
+            ResponseEntity<Student[]> response = restTemplate.getForEntity("/student/age?minAge=18&maxAge=20", Student[].class);
             assertEquals(200, response.getStatusCodeValue());
             assertNotNull(response.getBody());
-            assertTrue((BooleanSupplier) response.getBody());
+            assertTrue(response.getBody().length > 0);
         }
 
         @Test
         public void testGetStudentFaculty() {
             ResponseEntity<Student> createResponse = restTemplate.postForEntity("/student/", testStudent, Student.class);
             Long studentId = createResponse.getBody().getId();
-            ResponseEntity<Faculty> response = restTemplate.getForEntity("/student/faculty/" + studentId, Faculty.class);
+            ResponseEntity<Faculty> response = restTemplate.getForEntity("/faculty/" + studentId, Faculty.class);
             assertEquals(200, response.getStatusCodeValue());
             assertNotNull(response.getBody());
         }
