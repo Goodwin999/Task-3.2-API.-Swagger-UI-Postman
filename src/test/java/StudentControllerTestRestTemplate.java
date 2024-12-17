@@ -9,6 +9,8 @@ import org.springframework.test.context.ContextConfiguration;
 import ru.hogwarts.school.SchoolApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.StudentService;
 import java.util.function.BooleanSupplier;
 
@@ -21,6 +23,11 @@ public class StudentControllerTestRestTemplate {
     private TestRestTemplate restTemplate;
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private FacultyRepository facultyRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
     private Student testStudent;
 
 

@@ -8,6 +8,10 @@ import org.springframework.test.context.ContextConfiguration;
 import ru.hogwarts.school.SchoolApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
+import ru.hogwarts.school.service.FacultyService;
+
 import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,6 +22,13 @@ public class FacultyControllerTestRestTemplate {
 
     @Autowired
     private TestRestTemplate restTemplate;
+    @Autowired
+    private FacultyService facultyService;
+    @Autowired
+    private FacultyRepository facultyRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     private Faculty testFaculty;
 
