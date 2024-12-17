@@ -63,7 +63,7 @@ public class StudentController {
         List<Student> students = studentRepository.findByAgeBetween(minAge, maxAge);
         return ResponseEntity.ok().body(students);
     }
-    @GetMapping("/faculty/{Id}")
+    @GetMapping("/faculty/{id}")
         public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("studentId") long studentId) {
             Student student = studentService.read(studentId);
             if (student == null) {
