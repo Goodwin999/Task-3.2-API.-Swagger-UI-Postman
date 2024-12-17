@@ -25,7 +25,6 @@ public class FacultyControllerTestRestTemplate {
 
     @BeforeEach
     public void setup() {
-        // Создаем тестовый факультет
         testFaculty = new Faculty();
         testFaculty.setName("Gryffindor");
         testFaculty.setColor("Red");
