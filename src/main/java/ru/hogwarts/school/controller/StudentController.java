@@ -64,12 +64,12 @@ public class StudentController {
         return ResponseEntity.ok().body(students);
     }
     @GetMapping("/faculty/{id}")
-        public ResponseEntity<Faculty> getStudentFaculty(@PathVariable long id) {
-            Student student = studentService.read(id);
-            if (student == null) {
-                return ResponseEntity.notFound().build();
-            }
-            Faculty faculty = student.getFaculty();
-            return ResponseEntity.ok().body(faculty);
+    public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("id") long studentId) {
+        Student student = studentService.read(studentId);
+        if (student == null) {
+            return ResponseEntity.notFound().build();
+        }
+        Faculty faculty = student.getFaculty();
+        return ResponseEntity.ok().body(faculty);
     }
 }
