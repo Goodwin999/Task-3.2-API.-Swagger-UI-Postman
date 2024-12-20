@@ -2,33 +2,36 @@ package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
 @Service
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
+    private final FacultyRepository facultyRepository;
 @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
-    }
+    this.facultyRepository = facultyRepository;
+}
 
     @Override
-    public Student create(Student student) throws DatabaseAccessException {
-        try {
-            if (student.getFaculty() == null || student.getFaculty().getId() == null) {
-                throw new IllegalArgumentException("Факультет студента не может быть пустым или transient.");
-            }
-            System.out.println("Создание студента с факультетом: " + student.getFaculty().getId());
-            student.setId(null); // Убираем потенциальный конфликт ID
-            return studentRepository.save(student);
-        } catch (Exception ex) {
-            throw new DatabaseAccessException("Ошибка доступа к базе данных при создании студента: " + ex.getMessage(), ex);
+    public Student create(Student student)  {
+        if (student.getFaculty() == null || student.getFaculty().getId() == null) {
+            throw new IllegalArgumentException("Факультет студента не может быть пустым или transient.");
         }
+        Optional<Faculty> facultyOpt = facultyRepository.findById(student.getFaculty().getId());
+        if (facultyOpt.isEmpty()) {
+            throw new IllegalArgumentException("Указанный факультет не существует.");
+        }
+        student.setFaculty(facultyOpt.get());
+        student.setId(null);
+        return studentRepository.save(student);
     }
+
 
     @Override
     public Student read(long id) {
@@ -93,6 +96,13 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.findLastFiveStudents();
     }
 
+    @Override
+    public List<Student> findByAgeBetween(int minAge, int maxAge) {
+        if (minAge > maxAge) {
+            throw new IllegalArgumentException("Минимальный возраст не может быть больше максимального.");
+        }
+        return studentRepository.findByAgeBetween(minAge, maxAge);
+    }
 
 }
 

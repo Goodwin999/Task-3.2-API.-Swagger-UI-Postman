@@ -1,13 +1,12 @@
 package ru.hogwarts.school.service;
 
-import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 
 import java.util.List;
 
 public interface StudentService {
-    Student create(Student student) throws DatabaseAccessException;
+    Student create(Student student);
 
     Student read(long id);
 
@@ -20,7 +19,5 @@ public interface StudentService {
     double getAverageStudentAge();
     List<Student> getLastFiveStudents();
 
-
-
-
+    List<Student> findByAgeBetween(int minAge, int maxAge);
 }

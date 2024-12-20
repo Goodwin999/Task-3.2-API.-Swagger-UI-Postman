@@ -2,39 +2,56 @@ package ru.hogwarts.school.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
+import ru.hogwarts.school.service.FacultyService;
 import ru.hogwarts.school.service.StudentService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/student")
 @Tag(name = "Управление студентами", description = "Методы для работы со студентами")
 public class StudentController {
     private final StudentService studentService;
-    private final StudentRepository studentRepository;
+    private  final FacultyService facultyService;
+
 
     @Autowired
-    public StudentController(StudentService studentService, StudentRepository studentRepository) {
+    public StudentController(StudentService studentService, FacultyService facultyService) {
         this.studentService = studentService;
-        this.studentRepository = studentRepository;
+        this.facultyService = facultyService;
     }
 
     @PostMapping("/")
     public ResponseEntity<Student> createStudent(@RequestBody Student student) throws DatabaseAccessException {
-        try {
-            Student createdStudent = studentService.create(student);
-            return ResponseEntity.ok().body(createdStudent);
-        } catch (DatabaseAccessException ex) {
-            System.err.println("Ошибка при создании студента: " + ex.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        // Проверяем, передан ли факультет
+        if (student.getFaculty() == null) {
+            return ResponseEntity.badRequest().body(null);
         }
+        Faculty faculty = student.getFaculty();
+        // Проверяем, существует ли факультет в базе данных
+        Optional<Faculty> facultyOpt = faculty.getId() != null
+                ? facultyService.findById(faculty.getId())
+                : Optional.empty();
+        if (facultyOpt.isEmpty() && (faculty.getName() == null || faculty.getColor() == null)) {
+            return ResponseEntity.badRequest().body(null); // Невозможно определить факультет
+        }
+        // Если факультет найден, связываем с ним студента, иначе сохраняем новый факультет
+        if (facultyOpt.isPresent()) {
+            student.setFaculty(facultyOpt.get());
+        } else {
+            Faculty newFaculty = facultyService.create(faculty);
+            student.setFaculty(newFaculty);
+        }
+        // Сохраняем студента
+        Student createdStudent = studentService.create(student);
+        return ResponseEntity.ok(createdStudent);
     }
 
     @GetMapping("/{id}")
@@ -72,7 +89,7 @@ public class StudentController {
 
     @GetMapping("/age")
     public ResponseEntity<List<Student>> getStudentsByAgeRange(@RequestParam int minAge, @RequestParam int maxAge) {
-        List<Student> students = studentRepository.findByAgeBetween(minAge, maxAge);
+        List<Student> students = studentService.findByAgeBetween(minAge, maxAge);
         return ResponseEntity.ok().body(students);
     }
 

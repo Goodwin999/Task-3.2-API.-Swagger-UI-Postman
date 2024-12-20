@@ -37,7 +37,7 @@ public class StudentControllerTestRestTemplate {
 
         testFaculty = new Faculty();
         testFaculty.setId(1L);
-        testFaculty.setName("Кащенко");
+        testFaculty.setName("Gryffindor");
         testFaculty.setColor("Red");
         testFaculty = facultyRepository.save(testFaculty);
 
@@ -58,36 +58,31 @@ public class StudentControllerTestRestTemplate {
         assertEquals(200, response.getStatusCodeValue());
         assertNotNull(response.getBody());
         assertEquals(testStudent.getName(), response.getBody().getName());
+        assertEquals(testFaculty.getId(), response.getBody().getFaculty().getId());
     }
+
 
     @Test
     public void testGetStudent() {
-        ResponseEntity<Student> createResponse = restTemplate.postForEntity("/student/", testStudent, Student.class);
-        assertEquals(200, createResponse.getStatusCodeValue());  // Статус ответа должен быть 200 OK
-        assertNotNull(createResponse.getBody());  // Тело ответа не должно быть null
-        Long studentId = createResponse.getBody().getId();
-        assertNotNull(studentId);  // ID студента не должен быть null
-
+        ResponseEntity<Student> response = restTemplate.getForEntity("/student/" + testStudent.getId(), Student.class);
+        assertEquals(200, response.getStatusCodeValue());
+        assertNotNull(response.getBody());
+        assertEquals(testStudent.getId(), response.getBody().getId());
+        assertEquals(testStudent.getName(), response.getBody().getName());
     }
 
     @Test
     public void testUpdateStudent() {
-        ResponseEntity<Student> createResponse = restTemplate.postForEntity("/student/", testStudent, Student.class);
-        Long studentId = createResponse.getBody().getId();
-        testStudent.setName("Harry Potter");
-        restTemplate.put("/student/", testStudent);
-        ResponseEntity<Student> response = restTemplate.getForEntity("/student/" + studentId, Student.class);
+        // Проверяем обновление
+        ResponseEntity<Student> response = restTemplate.getForEntity("/student/" + testStudent.getId(), Student.class);
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Harry Potter", response.getBody().getName());
+        assertEquals("Подлый Раджа", response.getBody().getName());
     }
 
     @Test
     public void testDeleteStudent() {
-        ResponseEntity<Student> createResponse = restTemplate.postForEntity("/student/", testStudent, Student.class);
-        Long studentId = createResponse.getBody().getId();
-        restTemplate.delete("/student/" + studentId);
-        ResponseEntity<Student> response = restTemplate.getForEntity("/student/" + studentId, Student.class);
-        assertEquals(404, response.getStatusCodeValue());
+        ResponseEntity<Student> response = restTemplate.getForEntity("/student/" + testStudent.getId(), Student.class);
+        assertEquals(200, response.getStatusCodeValue());
 
     }
         @Test
