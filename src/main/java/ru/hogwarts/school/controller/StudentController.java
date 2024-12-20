@@ -30,29 +30,18 @@ public class StudentController {
 
     @PostMapping("/")
     public ResponseEntity<Student> createStudent(@RequestBody Student student) throws DatabaseAccessException {
-        // Проверяем, передан ли факультет
         if (student.getFaculty() == null) {
             return ResponseEntity.badRequest().body(null);
         }
-        Faculty faculty = student.getFaculty();
-        // Проверяем, существует ли факультет в базе данных
-        Optional<Faculty> facultyOpt = faculty.getId() != null
-                ? facultyService.findById(faculty.getId())
-                : Optional.empty();
-        if (facultyOpt.isEmpty() && (faculty.getName() == null || faculty.getColor() == null)) {
-            return ResponseEntity.badRequest().body(null); // Невозможно определить факультет
+        Optional<Faculty> facultyOpt = facultyService.findById(student.getFaculty().getId());
+        if (facultyOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
         }
-        // Если факультет найден, связываем с ним студента, иначе сохраняем новый факультет
-        if (facultyOpt.isPresent()) {
-            student.setFaculty(facultyOpt.get());
-        } else {
-            Faculty newFaculty = facultyService.create(faculty);
-            student.setFaculty(newFaculty);
-        }
-        // Сохраняем студента
+        // Если проверки прошли, сохраняем студента
+        student.setFaculty(facultyOpt.get());
         Student createdStudent = studentService.create(student);
-        return ResponseEntity.ok(createdStudent);
-    }
+        return ResponseEntity.ok().body(createdStudent);
+        }
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable long id) {
