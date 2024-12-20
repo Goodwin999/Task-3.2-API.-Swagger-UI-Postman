@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -119,8 +120,8 @@ public class AvatarController {
         if (page < 0 || size <= 0) {
             return ResponseEntity.badRequest().build();
         }
-
-        Page<Avatar> avatarsPage = avatarService.getAvatars(PageRequest.of(page, size));
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Avatar> avatarsPage = avatarService.getAvatars(pageable);
         return ResponseEntity.ok(avatarsPage);
     }
 }
