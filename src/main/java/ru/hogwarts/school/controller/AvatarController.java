@@ -1,6 +1,6 @@
 package ru.hogwarts.school.controller;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -30,6 +31,8 @@ public class AvatarController {
     private final StudentService studentService;
     @Value("${avatar.upload.dir}")
     private String uploadDir;
+
+    @Autowired
     public AvatarController(AvatarService avatarService, StudentService studentService, @Value("${avatar.upload.dir}") String uploadDir) {
         this.avatarService = avatarService;
         this.studentService = studentService;
@@ -43,25 +46,20 @@ public class AvatarController {
             System.err.println("Failed to create directory: " + uploadDir);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-
         try {
             Avatar avatar = new Avatar();
             avatar.setFilePath(file.getOriginalFilename());
             avatar.setFileSize(file.getSize());
             avatar.setMediaType(file.getContentType());
             avatar.setData(file.getBytes());
-
             Student student = studentService.read(studentId);
             if (student == null) {
                 return ResponseEntity.badRequest().body(null);
             }
             avatar.setStudent(student);
-
             avatar = avatarService.saveAvatar(avatar);
-
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             System.out.println("Имя файла: " + fileName);
-
             Path filePath = Paths.get(uploadDir, fileName);
             System.out.println("Путь для сохранения файла: " + filePath.toString());
 
@@ -73,8 +71,6 @@ public class AvatarController {
                 System.err.println("Ошибка при сохранении файла: " + e.getMessage());
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
             }
-
-            // Возвращаем DTO
             AvatarDTO avatarDTO = new AvatarDTO();
             avatarDTO.setId(avatar.getId());
             avatarDTO.setFilePath(avatar.getFilePath());
@@ -88,7 +84,6 @@ public class AvatarController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
-
 
     @GetMapping("/from-db/{id}")
     public ResponseEntity<byte[]> getAvatarFromDatabase(@PathVariable Long id) {
@@ -115,5 +110,10 @@ public class AvatarController {
     public ResponseEntity<Void> deleteAvatar(@PathVariable Long id) {
         avatarService.deleteAvatar(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Avatar>> getAvatars(@RequestParam int page, @RequestParam int size) {
+        return ResponseEntity.ok(avatarService.getAvatars(page, size));
     }
 }
