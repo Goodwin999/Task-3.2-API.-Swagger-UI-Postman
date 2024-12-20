@@ -32,11 +32,10 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     @Override
-    public List<Avatar> getAvatars(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Avatar> avatarPage = avatarRepository.findAll(pageable);
-        return avatarPage.getContent();
+    public Page<Avatar> getAvatars(Pageable pageable) {
+        return avatarRepository.findAll(pageable);
     }
+
 }
 
 

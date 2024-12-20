@@ -2,6 +2,8 @@ package ru.hogwarts.school.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -113,7 +115,12 @@ public class AvatarController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Avatar>> getAvatars(@RequestParam int page, @RequestParam int size) {
-        return ResponseEntity.ok(avatarService.getAvatars(page, size));
+    public ResponseEntity<Page<Avatar>> getAvatars(@RequestParam int page, @RequestParam int size) {
+        if (page < 0 || size <= 0) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        Page<Avatar> avatarsPage = avatarService.getAvatars(PageRequest.of(page, size));
+        return ResponseEntity.ok(avatarsPage);
     }
 }

@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import ru.hogwarts.school.model.Avatar;
 
 import java.util.List;
@@ -12,5 +14,5 @@ public interface AvatarService {
 
     void deleteAvatar(Long id);
 
-    List<Avatar> getAvatars(int page, int size);
+    Page<Avatar> getAvatars(Pageable pageable);
 }
