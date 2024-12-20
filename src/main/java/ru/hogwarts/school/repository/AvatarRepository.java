@@ -1,5 +1,7 @@
 package ru.hogwarts.school.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.hogwarts.school.model.Avatar;
@@ -13,5 +15,7 @@ public interface AvatarRepository extends JpaRepository<Avatar, Long> {
     Avatar save(Avatar avatar);
 
     void deleteById(Long id);
+
+    Page<Avatar> findAll(Pageable pageable);
 
 }

@@ -8,16 +8,17 @@ import java.util.Objects;
 
 @Entity
 public class Student {
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
     private Long id;
     private String name;
     private int age;
     @JsonIgnore
     @OneToOne(mappedBy = "student", cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional = true)
     private Avatar avatar;
-    @ManyToOne
-    @JoinColumn(name = "faculty_id")
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
+    @JoinColumn(name = "faculty_id", nullable = false)
     @JsonBackReference
     private Faculty faculty;
 

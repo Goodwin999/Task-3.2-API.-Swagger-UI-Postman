@@ -1,6 +1,8 @@
 package ru.hogwarts.school.controller;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.exception.DatabaseAccessException;
@@ -18,6 +20,7 @@ public class StudentController {
     private final StudentService studentService;
     private final StudentRepository studentRepository;
 
+    @Autowired
     public StudentController(StudentService studentService, StudentRepository studentRepository) {
         this.studentService = studentService;
         this.studentRepository = studentRepository;
@@ -25,9 +28,15 @@ public class StudentController {
 
     @PostMapping("/")
     public ResponseEntity<Student> createStudent(@RequestBody Student student) throws DatabaseAccessException {
-        Student createdStudent = studentService.create(student);
-        return ResponseEntity.ok().body(createdStudent);
+        try {
+            Student createdStudent = studentService.create(student);
+            return ResponseEntity.ok().body(createdStudent);
+        } catch (DatabaseAccessException ex) {
+            System.err.println("Ошибка при создании студента: " + ex.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable long id) {
         Student student = studentService.read(id);
@@ -36,6 +45,7 @@ public class StudentController {
         }
         return ResponseEntity.ok().body(student);
     }
+
     @PutMapping("/")
     public ResponseEntity<Student> updateStudent(@RequestBody Student student) {
         Student updatedStudent = studentService.update(student);
@@ -44,6 +54,7 @@ public class StudentController {
         }
         return ResponseEntity.ok().body(updatedStudent);
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable long id) {
         boolean deleted = studentService.delete(id);
@@ -58,18 +69,39 @@ public class StudentController {
         List<Student> filteredStudents = studentService.filterStudentsByAge(age);
         return ResponseEntity.ok().body(filteredStudents);
     }
+
     @GetMapping("/age")
     public ResponseEntity<List<Student>> getStudentsByAgeRange(@RequestParam int minAge, @RequestParam int maxAge) {
         List<Student> students = studentRepository.findByAgeBetween(minAge, maxAge);
         return ResponseEntity.ok().body(students);
     }
+
     @GetMapping("/faculty/{id}")
     public ResponseEntity<Faculty> getStudentFaculty(@PathVariable("id") long studentId) {
-        Student student = studentService.read(studentId);
-        if (student == null) {
-            return ResponseEntity.notFound().build();
+        Faculty faculty = studentService.getStudentFaculty(studentId);  // Используем сервис
+        if (faculty == null) {
+            System.out.println("Факультет имеет значение null для StudentId: " + studentId);
+            return ResponseEntity.notFound().build();  // Проверяем, если факультет пустой
         }
-        Faculty faculty = student.getFaculty();
-        return ResponseEntity.ok().body(faculty);
+        return ResponseEntity.ok().body(faculty);  // Возвращаем факультет
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getTotalStudentsCount() {
+        long count = studentService.getTotalStudentsCount();
+        return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/average-age")
+    public ResponseEntity<Double> getAverageStudentAge() {
+        double averageAge = studentService.getAverageStudentAge();
+        return ResponseEntity.ok(averageAge);
+    }
+
+    @GetMapping("/last-five")
+    public ResponseEntity<List<Student>> getLastFiveStudents() {
+        List<Student> lastFiveStudents = studentService.getLastFiveStudents();
+        return ResponseEntity.ok(lastFiveStudents);
+
     }
 }

@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exception.DatabaseAccessException;
 import ru.hogwarts.school.model.Faculty;
@@ -10,7 +11,7 @@ import java.util.*;
 @Service
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository studentRepository;
-
+@Autowired
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
@@ -18,10 +19,11 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public Student create(Student student) throws DatabaseAccessException {
         try {
-            if (student.getName() == null || student.getName().isEmpty()) {
-                throw new IllegalArgumentException("Имя не может быть пустым или не указанным.");
+            if (student.getFaculty() == null || student.getFaculty().getId() == null) {
+                throw new IllegalArgumentException("Факультет студента не может быть пустым или transient.");
             }
-            student.setId(null);
+            System.out.println("Создание студента с факультетом: " + student.getFaculty().getId());
+            student.setId(null); // Убираем потенциальный конфликт ID
             return studentRepository.save(student);
         } catch (Exception ex) {
             throw new DatabaseAccessException("Ошибка доступа к базе данных при создании студента: " + ex.getMessage(), ex);
@@ -65,10 +67,32 @@ public class StudentServiceImpl implements StudentService {
     public List<Student> filterStudentsByAge(int age) {
         return studentRepository.findByAge(age);
     }
+
     @Override
     public Faculty getStudentFaculty(Long studentId) {
         Student student = read(studentId);
+        if (student == null) {
+            System.out.println("Студент не найден по ID: " + studentId);  // Логируем
+            return null;
+        }
         return student.getFaculty();
     }
+
+    @Override
+    public long getTotalStudentsCount() {
+        return studentRepository.countAllStudents();
+    }
+
+    @Override
+    public double getAverageStudentAge() {
+        return studentRepository.getAverageAge();
+    }
+
+    @Override
+    public List<Student> getLastFiveStudents() {
+        return studentRepository.findLastFiveStudents();
+    }
+
+
 }
 

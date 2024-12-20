@@ -15,6 +15,12 @@ public interface StudentService {
 
     boolean delete(long id);
     List<Student> filterStudentsByAge(int age);
-
     Faculty getStudentFaculty(Long studentId);
+    long getTotalStudentsCount();
+    double getAverageStudentAge();
+    List<Student> getLastFiveStudents();
+
+
+
+
 }
