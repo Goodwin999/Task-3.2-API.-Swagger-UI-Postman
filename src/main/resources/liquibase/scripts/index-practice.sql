@@ -1,17 +1,17 @@
-liquibase formatted sql
+-- changeSet: id: 1 author: Slava comment: Индекс для поиска по имени студента:
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'idx_student_name'
+    ) THEN
+        CREATE INDEX idx_student_name ON public.student (name);
+    END IF;
+END $$;
 
-//Индекс для поиска по имени студента
-- changeSet:
-      id: 2
-      author: Ilone Musk
-      comment: Add index on student name
-      sql: |
-          CREATE INDEX idx_student_name ON public.student (name);
-
-//Индекс для поиска по названию и цвету факультета
-- changeSet:
-      id: 3
-      author: Ilone Musk
-      comment: Add index on faculty name and color
-      sql: |
-          CREATE INDEX idx_faculty_name_color ON public.faculty (name, color);
+-- changeSet: id: 2 author: Slava comment: Индекс для поиска по названию и цвету факультета:
+DO $$ BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_indexes WHERE schemaname = 'public' AND indexname = 'idx_faculty_name_color'
+    ) THEN
+        CREATE INDEX idx_faculty_name_color ON public.faculty (name, color);
+    END IF;
+END $$;
