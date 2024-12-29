@@ -1,4 +1,5 @@
 
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import ru.hogwarts.school.SchoolApplication;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
@@ -15,7 +17,7 @@ import ru.hogwarts.school.service.StudentService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+@Transactional
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = SchoolApplication.class)
 public class StudentControllerTestRestTemplate {
@@ -44,8 +46,8 @@ public class StudentControllerTestRestTemplate {
         System.out.println("Сохраненный факультет: " + testFaculty);
 
         testStudent = new Student();
-        testStudent.setName("Подлый Раджа");
-        testStudent.setAge(18);
+        testStudent.setName("Иванов Иван");
+        testStudent.setAge(22);
         testStudent.setFaculty(testFaculty);
         testStudent = studentRepository.save(testStudent);
 
@@ -76,7 +78,7 @@ public class StudentControllerTestRestTemplate {
         // Проверяем обновление
         ResponseEntity<Student> response = restTemplate.getForEntity("/student/" + testStudent.getId(), Student.class);
         assertEquals(200, response.getStatusCodeValue());
-        assertEquals("Подлый Раджа", response.getBody().getName());
+        assertEquals("Иванов Иван", response.getBody().getName());
     }
 
     @Test
@@ -88,11 +90,11 @@ public class StudentControllerTestRestTemplate {
         @Test
         public void testFilterStudentsByAge() {
             restTemplate.postForEntity("/student/", testStudent, Student.class);
-            ResponseEntity<Student[]> response = restTemplate.getForEntity("/student/?age=18", Student[].class);
+            ResponseEntity<Student[]> response = restTemplate.getForEntity("/student/?age=22", Student[].class);
             assertEquals(200, response.getStatusCodeValue());
             assertNotNull(response.getBody());
             assertTrue(response.getBody().length > 0);
-            assertEquals("Harry Potter", response.getBody()[0].getName());
+            assertEquals("Иванов Иван", response.getBody()[0].getName());
         }
 
         @Test
