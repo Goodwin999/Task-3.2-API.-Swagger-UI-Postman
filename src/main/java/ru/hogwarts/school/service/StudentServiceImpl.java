@@ -43,73 +43,98 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student read(long id) {
+        logger.info("Вызван метод read для получения студента с id = {}", id);
         Optional<Student> studentOpt = studentRepository.findById(id);
         if (studentOpt.isEmpty()) {
-            System.out.println("Студент с id " + id + " не найден.");
+            logger.warn("Студент с id = {} не найден.", id);
             return null;
         }
+        logger.debug("Студент найден: {}", studentOpt.get());
         return studentOpt.get();
     }
 
 
     @Override
     public Student update(Student updatedStudent) {
+        logger.info("Был вызван метод update для обновления студента с id = {}", updatedStudent.getId());
         Optional<Student> studentOpt = studentRepository.findById(updatedStudent.getId());
         if (studentOpt.isEmpty()) {
-            System.out.println("Студент с id " + updatedStudent.getId() + " не найден. Обновление невозможно.");
+            logger.warn("Студент с id = {} не найден. Обновление невозможно.", updatedStudent.getId());
             return null;
         }
-        return studentRepository.save(updatedStudent);
+        Student savedStudent = studentRepository.save(updatedStudent);
+        logger.info("Студент с id = {} успешно обновлен.", savedStudent.getId());
+        return savedStudent;
     }
 
     @Override
     public boolean delete(long id) {
+        logger.info("Был вызван метод delete для удаления студента с id = {}", id);
         Optional<Student> studentOpt = studentRepository.findById(id);
         if (studentOpt.isEmpty()) {
-            System.out.println("Студент с id " + id + " не найден. Удаление невозможно.");
+            logger.warn("Студент с id = {} не найден. Удаление невозможно.", id);
             return false;
         }
         studentRepository.deleteById(id);
-        System.out.println("Студент с id " + id + " успешно удален.");
+        logger.info("Студент с id = {} успешно удален.", id);
         return true;
     }
 
     @Override
     public List<Student> filterStudentsByAge(int age) {
-        return studentRepository.findByAge(age);
+        logger.info("Был вызван метод filterStudentsByAge для получения студентов с возрастом = {}", age);
+        List<Student> students = studentRepository.findByAge(age);
+        logger.debug("Найдено {} студентов с возрастом {}", students.size(), age);
+        return students;
     }
 
     @Override
     public Faculty getStudentFaculty(Long studentId) {
+        logger.info("Был вызван метод getStudentFaculty для получения факультета студента с id = {}", studentId);
         Student student = read(studentId);
         if (student == null) {
-            System.out.println("Студент не найден по ID: " + studentId);  // Логируем
+            logger.warn("Студент с id = {} не найден.", studentId);
             return null;
         }
-        return student.getFaculty();
+        Faculty faculty = student.getFaculty();
+        logger.debug("Факультет студента с id = {}: {}", studentId, faculty);
+        return faculty;
     }
 
     @Override
     public long getTotalStudentsCount() {
-        return studentRepository.countAllStudents();
+        logger.info("Был вызван метод getTotalStudentsCount для подсчета общего количества студентов.");
+        long count = studentRepository.countAllStudents();
+        logger.debug("Общее количество студентов: {}", count);
+        return count;
     }
 
     @Override
     public double getAverageStudentAge() {
-        return studentRepository.getAverageAge();
+        logger.info("Был вызван метод getAverageStudentAge для подсчета среднего возраста студентов.");
+        double averageAge = studentRepository.getAverageAge();
+        logger.debug("Средний возраст студентов: {}", averageAge);
+        return averageAge;
     }
 
     @Override
     public List<Student> getLastFiveStudents() {
-        return studentRepository.findLastFiveStudents();
+        logger.info("Был вызван метод getLastFiveStudents для получения последних пяти студентов.");
+        List<Student> students = studentRepository.findLastFiveStudents();
+        logger.debug("Последние пять студентов: {}", students);
+        return students;
     }
 
     @Override
     public List<Student> findByAgeBetween(int minAge, int maxAge) {
+        logger.info("Был вызван метод findByAgeBetween для поиска студентов с возрастом между {} и {}", minAge, maxAge);
         if (minAge > maxAge) {
+            logger.error("Минимальный возраст ({}) больше максимального ({}).", minAge, maxAge);
             throw new IllegalArgumentException("Минимальный возраст не может быть больше максимального.");
         }
-        return studentRepository.findByAgeBetween(minAge, maxAge);
+        List<Student> students = studentRepository.findByAgeBetween(minAge, maxAge);
+        logger.debug("Найдено {} студентов с возрастом между {} и {}", students.size(), minAge, maxAge);
+        return students;
     }
 
 }
