@@ -13,14 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "Информация", description = "Методы для получения информации о порте")
 public class InfoController {
     private static final Logger logger = LoggerFactory.getLogger(InfoController.class);
-
+    @Value("${spring.profiles.active:default}")
+    private String activeProfile;
     @Value("${server.port}")
     private String serverPort;
 
     @GetMapping("/port")
     public String getServerPort() {
-        logger.info("Вызван метод для получения порта приложения.");
-        return "Порт приложения: " + serverPort;
+        logger.info("Активный профиль: {}", activeProfile);
+        return "Порт приложения: " + serverPort + " (Профиль: " + activeProfile + ")";
     }
 
 }
