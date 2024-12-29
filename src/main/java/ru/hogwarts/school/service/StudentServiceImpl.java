@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.model.Faculty;
@@ -10,6 +12,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 import java.util.*;
 @Service
 public class StudentServiceImpl implements StudentService {
+    private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
 @Autowired
@@ -20,16 +23,21 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Student create(Student student)  {
+        logger.info("Вызван метод create для создания нового студента.");
         if (student.getFaculty() == null || student.getFaculty().getId() == null) {
+            logger.error("Факультет студента не указан или некорректен.");
             throw new IllegalArgumentException("Факультет студента не может быть пустым или transient.");
         }
         Optional<Faculty> facultyOpt = facultyRepository.findById(student.getFaculty().getId());
         if (facultyOpt.isEmpty()) {
+            logger.error("Факультет с id = {} не найден.", student.getFaculty().getId());
             throw new IllegalArgumentException("Указанный факультет не существует.");
         }
         student.setFaculty(facultyOpt.get());
         student.setId(null);
-        return studentRepository.save(student);
+        Student savedStudent = studentRepository.save(student);
+        logger.debug("Студент успешно создан: {}", savedStudent);
+        return savedStudent;
     }
 
 
