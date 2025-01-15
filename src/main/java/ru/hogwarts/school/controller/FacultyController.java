@@ -73,6 +73,15 @@ public class FacultyController {
         }
         return ResponseEntity.ok(students);
     }
+    @GetMapping("/longest-name")
+    public ResponseEntity<String> getLongestFacultyName() {
+        String longestName = facultyService.findLongestFacultyName();
+        if (longestName == null) {
+            return ResponseEntity.noContent().build(); // Если нет факультетов, возвращаем 204 No Content
+        }
+        return ResponseEntity.ok(longestName); // Возвращаем самое длинное название
+    }
+
 
 }
 

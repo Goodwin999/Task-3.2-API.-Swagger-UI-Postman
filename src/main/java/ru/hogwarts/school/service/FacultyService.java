@@ -15,4 +15,6 @@ public interface FacultyService {
     List<Faculty> searchFacultiesByNameOrColorIgnoreCase(String searchString);
     List<Student> getStudentsByFacultyId(long facultyId);
     Optional<Faculty> findById(Long id);
+    String findLongestFacultyName();
+
 }
