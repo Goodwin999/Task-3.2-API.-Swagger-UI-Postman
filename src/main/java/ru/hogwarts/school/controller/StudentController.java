@@ -107,6 +107,11 @@ public class StudentController {
     public ResponseEntity<List<Student>> getLastFiveStudents() {
         List<Student> lastFiveStudents = studentService.getLastFiveStudents();
         return ResponseEntity.ok(lastFiveStudents);
-
     }
+    @GetMapping("/names-starting-with-a")
+    public ResponseEntity<List<String>> getStudentNamesStartingWithA() {
+        List<String> studentNames = studentService.findAllStudentNamesStartingWithA();
+        return ResponseEntity.ok(studentNames);
+    }
+
 }

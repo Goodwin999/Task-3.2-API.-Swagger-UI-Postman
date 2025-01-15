@@ -136,6 +136,19 @@ public class StudentServiceImpl implements StudentService {
         logger.debug("Найдено {} студентов с возрастом между {} и {}", students.size(), minAge, maxAge);
         return students;
     }
+    @Override
+    public List<String> findAllStudentNamesStartingWithA() {
+        logger.info("Был вызван метод findAllStudentNamesStartingWithA.");
+        List<String> studentNames = studentRepository.findAll().stream()
+                .map(Student::getName) // Извлекаем имена
+                .filter(name -> name.startsWith("А")) // Фильтруем по букве "А"
+                .map(String::toUpperCase) // Преобразуем в верхний регистр
+                .sorted() // Сортируем
+                .toList(); // Преобразуем в список
+        logger.debug("Имена студентов, начинающихся на 'А': {}", studentNames);
+        return studentNames;
+    }
+
 
 }
 
