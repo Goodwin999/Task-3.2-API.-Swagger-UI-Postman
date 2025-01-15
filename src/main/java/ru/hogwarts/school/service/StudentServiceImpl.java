@@ -148,6 +148,14 @@ public class StudentServiceImpl implements StudentService {
         logger.debug("Имена студентов, начинающихся на 'А': {}", studentNames);
         return studentNames;
     }
+    @Override
+    public double getAverageStudentAgeWithStreams() {
+        List<Student> students = studentRepository.findAll();
+        return students.stream()
+                .mapToInt(Student::getAge)
+                .average()
+                .orElse(0); // Возвращает 0, если список студентов пустой
+    }
 
 
 }

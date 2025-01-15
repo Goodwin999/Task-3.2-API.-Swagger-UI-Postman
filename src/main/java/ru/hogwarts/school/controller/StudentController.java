@@ -113,5 +113,11 @@ public class StudentController {
         List<String> studentNames = studentService.findAllStudentNamesStartingWithA();
         return ResponseEntity.ok(studentNames);
     }
+    @GetMapping("/average-age-stream")
+    public ResponseEntity<Double> getAverageStudentAgeWithStreams() {
+        double averageAge = studentService.getAverageStudentAgeWithStreams();
+        return ResponseEntity.ok(averageAge);
+    }
+
 
 }

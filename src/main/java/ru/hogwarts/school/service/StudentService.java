@@ -21,5 +21,5 @@ public interface StudentService {
 
     List<Student> findByAgeBetween(int minAge, int maxAge);
     List<String> findAllStudentNamesStartingWithA();
-
+    double getAverageStudentAgeWithStreams();
 }
