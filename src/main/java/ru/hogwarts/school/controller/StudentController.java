@@ -147,7 +147,7 @@ public class StudentController {
         });
         thread1.start();
         thread2.start();
-        return ResponseEntity.ok("Student names are printed in synchronized mode.");
+        return ResponseEntity.ok("Имена студентов печатаются в синхронизированном режиме.");
 
     }
 }
