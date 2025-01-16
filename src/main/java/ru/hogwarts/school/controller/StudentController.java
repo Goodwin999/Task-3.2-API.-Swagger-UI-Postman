@@ -145,7 +145,6 @@ public class StudentController {
             studentService.printStudentName(studentNames.get(4));
             studentService.printStudentName(studentNames.get(5));
         });
-        // Запускаем потоки
         thread1.start();
         thread2.start();
         return ResponseEntity.ok("Student names are printed in synchronized mode.");
