@@ -22,14 +22,8 @@ public class CalculationController {
 
     @GetMapping("/sum-parallel")
     public ResponseEntity<Map<String, Object>> getSumParallel() {
-        long startTime = System.currentTimeMillis();
-        int sum = calculationService.calculateSumWithParallelStream();
-        long endTime = System.currentTimeMillis();
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("sum", sum);
-        response.put("timeTaken", (endTime - startTime) + " ms");
-
-        return ResponseEntity.ok(response);
+        // Вызываем метод сервиса, который возвращает подготовленный результат
+        Map<String, Object> result = calculationService.calculateSumWithParallelStream();
+        return ResponseEntity.ok(result);
     }
 }
