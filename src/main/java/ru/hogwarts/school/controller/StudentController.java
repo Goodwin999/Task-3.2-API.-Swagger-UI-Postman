@@ -18,7 +18,7 @@ import java.util.Optional;
 @Tag(name = "Управление студентами", description = "Методы для работы со студентами")
 public class StudentController {
     private final StudentService studentService;
-    private  final FacultyService facultyService;
+    private final FacultyService facultyService;
 
 
     @Autowired
@@ -40,7 +40,7 @@ public class StudentController {
         student.setFaculty(facultyOpt.get());
         Student createdStudent = studentService.create(student);
         return ResponseEntity.ok().body(createdStudent);
-        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudent(@PathVariable long id) {
@@ -108,16 +108,47 @@ public class StudentController {
         List<Student> lastFiveStudents = studentService.getLastFiveStudents();
         return ResponseEntity.ok(lastFiveStudents);
     }
+
     @GetMapping("/names-starting-with-a")
     public ResponseEntity<List<String>> getStudentNamesStartingWithA() {
         List<String> studentNames = studentService.findAllStudentNamesStartingWithA();
         return ResponseEntity.ok(studentNames);
     }
+
     @GetMapping("/average-age-stream")
     public ResponseEntity<Double> getAverageStudentAgeWithStreams() {
         double averageAge = studentService.getAverageStudentAgeWithStreams();
         return ResponseEntity.ok(averageAge);
     }
 
+    @GetMapping("/print-parallel")
+    public ResponseEntity<String> printStudentsInParallel() {
+        // Получаем список имен и передаем его в сервисный метод
+        List<String> studentNames = studentService.getAllStudentNames();
+        studentService.printStudentsInParallel(studentNames);
+        return ResponseEntity.ok("Имена студентов печатаются параллельно.");
+    }
 
+    @GetMapping("/print-synchronized")
+    public ResponseEntity<String> printStudentsSynchronized() {
+        List<String> studentNames = studentService.getAllStudentNames();
+        // Печать первых двух имен в основном потоке
+        studentService.printStudentName(studentNames.get(0));
+        studentService.printStudentName(studentNames.get(1));
+        // Печать третьего и четвертого студентов в параллельном потоке
+        Thread thread1 = new Thread(() -> {
+            studentService.printStudentName(studentNames.get(2));
+            studentService.printStudentName(studentNames.get(3));
+        });
+        // Печать пятого и шестого студентов в еще одном параллельном потоке
+        Thread thread2 = new Thread(() -> {
+            studentService.printStudentName(studentNames.get(4));
+            studentService.printStudentName(studentNames.get(5));
+        });
+        // Запускаем потоки
+        thread1.start();
+        thread2.start();
+        return ResponseEntity.ok("Student names are printed in synchronized mode.");
+
+    }
 }

@@ -10,19 +10,21 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.*;
+
 @Service
 public class StudentServiceImpl implements StudentService {
     private static final Logger logger = LoggerFactory.getLogger(StudentServiceImpl.class);
     private final StudentRepository studentRepository;
     private final FacultyRepository facultyRepository;
-@Autowired
+
+    @Autowired
     public StudentServiceImpl(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
-    this.facultyRepository = facultyRepository;
-}
+        this.facultyRepository = facultyRepository;
+    }
 
     @Override
-    public Student create(Student student)  {
+    public Student create(Student student) {
         logger.info("Вызван метод create для создания нового студента.");
         if (student.getFaculty() == null || student.getFaculty().getId() == null) {
             logger.error("Факультет студента не указан или некорректен.");
@@ -136,6 +138,7 @@ public class StudentServiceImpl implements StudentService {
         logger.debug("Найдено {} студентов с возрастом между {} и {}", students.size(), minAge, maxAge);
         return students;
     }
+
     @Override
     public List<String> findAllStudentNamesStartingWithA() {
         logger.info("Был вызван метод findAllStudentNamesStartingWithA.");
@@ -148,6 +151,7 @@ public class StudentServiceImpl implements StudentService {
         logger.debug("Имена студентов, начинающихся на 'А': {}", studentNames);
         return studentNames;
     }
+
     @Override
     public double getAverageStudentAgeWithStreams() {
         List<Student> students = studentRepository.findAll();
@@ -155,6 +159,36 @@ public class StudentServiceImpl implements StudentService {
                 .mapToInt(Student::getAge)
                 .average()
                 .orElse(0); // Возвращает 0, если список студентов пустой
+    }
+
+    @Override
+    public List<String> getAllStudentNames() {
+        return List.of("Harry", "Hermione", "Ron", "Draco", "Luna", "Neville");
+    }
+
+    @Override
+    public void printStudentsInParallel(List<String> studentNames) {
+        // Печать первых двух имен в основном потоке
+        System.out.println("Main Thread: " + studentNames.get(0));
+        System.out.println("Main Thread: " + studentNames.get(1));
+        // Печать третьего и четвертого студента в параллельном потоке
+        Thread thread1 = new Thread(() -> {
+            System.out.println("Thread-1: " + studentNames.get(2));
+            System.out.println("Thread-1: " + studentNames.get(3));
+        });
+        // Печать пятого и шестого студента в еще одном параллельном потоке
+        Thread thread2 = new Thread(() -> {
+            System.out.println("Thread-2: " + studentNames.get(4));
+            System.out.println("Thread-2: " + studentNames.get(5));
+        });
+        // Запускаем потоки
+        thread1.start();
+        thread2.start();
+    }
+
+    @Override
+    public synchronized void printStudentName(String name) {
+        System.out.println(Thread.currentThread().getName() + ": " + name);
     }
 
 

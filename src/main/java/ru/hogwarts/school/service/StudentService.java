@@ -7,11 +7,8 @@ import java.util.List;
 
 public interface StudentService {
     Student create(Student student);
-
     Student read(long id);
-
     Student update(Student student);
-
     boolean delete(long id);
     List<Student> filterStudentsByAge(int age);
     Faculty getStudentFaculty(Long studentId);
@@ -22,4 +19,8 @@ public interface StudentService {
     List<Student> findByAgeBetween(int minAge, int maxAge);
     List<String> findAllStudentNamesStartingWithA();
     double getAverageStudentAgeWithStreams();
+    List<String> getAllStudentNames();
+    void printStudentsInParallel(List<String> studentNames);
+    void printStudentName(String name);
+
 }
